@@ -37,22 +37,10 @@ entreLlaves ds =
 aplanar :: Doc -> Doc
 aplanar = foldDoc vacio (\s rec -> texto s <+> rec) (\_ rec -> texto " " <+> rec)
 
+-- | Utilizamos recursión primitiva dado que en cada paso, necesitamos acceder a la subestructura del objeto (PPON y, segunda posición del ObjetoPP).
 pponADoc :: PPON -> Doc
-pponADoc p = case p of
-    TextoPP s -> texto (show s)
-    IntPP i   -> texto (show i)
-    ObjetoPP objeto ->
-        if (pponObjetoSimple (ObjetoPP objeto))
-        then aplanar (objetoToDoc objeto)
-        else objetoToDoc objeto
-  where
-    objetoToDoc :: [(String, PPON)] -> Doc
-    objetoToDoc tuplas = entreLlaves (map (\(s, pp) -> texto (show s) <+> texto ": " <+> formato pp) tuplas)
-
-    formato :: PPON -> Doc
-    formato pp =
-        if pponAtomico pp
-        then pponADoc pp
-        else if pponObjetoSimple pp
-             then aplanar (pponADoc pp)
-             else pponADoc pp 
+pponADoc (TextoPP s)= texto (show s)
+pponADoc (IntPP i)= texto (show i)
+pponADoc objeto = if pponObjetoSimple objeto then aplanar (docCreate objeto) else docCreate objeto
+    where
+      docCreate(ObjetoPP xs)= entreLlaves (map (\ (x, y)-> texto (show x)<+>texto ": "<+>pponADoc y) xs)
