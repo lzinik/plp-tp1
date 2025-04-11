@@ -24,7 +24,7 @@ Lemas utilizados:
 
 {LTexto}= {Para Todo d::Doc, s::String, k::Int positivos . indentar k (Texto s d) = Texto s (indentar k d)}
 
-{LLinea}= {Para Todo d::Doc, n,k::Int positivos . indentar m (Linea k d) = Linea (m+k) (indentar k d)}
+{LLinea}= {Para Todo d::Doc, m,k::Int positivos . indentar m (Linea k d) = Linea (m+k) (indentar k d)}
 
 
 Demostración de lemas:
@@ -96,12 +96,14 @@ caso x = Linea k doc (donde k::Int)
 Lado izquierdo:
 indentar n (indentar m (Linea k doc))
 {LLinea}= indentar n (Linea (m+k) (indentar m doc))
-{LLinea}= Linea (n+m+k) (indentar n (indentar m doc))
-{HI}= Linea (n+m+k) (indentar (n+m) doc) 
+{LLinea}= Linea (n+(m+k)) (indentar n (indentar m doc))
+{HI}= Linea (n+(m+k)) (indentar (n+m) doc) 
+{Int}= Linea (n+m+k) (indentar (n+m) doc)
 
 Lado derecho:
 indentar (n+m) (Linea k doc)
-{LLinea}= Linea (n+m+k) (indentar (n+m) doc)
+{LLinea}= Linea ((n+m)+k) (indentar (n+m) doc)
+{Int}= Linea (n+m+k) (indentar (n+m) doc)
 
 Como los dos lados me quedaron iguales, la afirmación vale para el caso x= Linea k doc
 
