@@ -1,0 +1,112 @@
+Se pide demostrar:
+Para Todo n,m::Int positivos && Para Todo x::Doc .
+indentar n (indentar m x) = indentar (n+m) x
+
+
+Definiciones del codigo:
+
+foldDoc :: b -> (String -> b ->b) -> (Int -> b -> b) -> Doc -> b
+{F}foldDoc cVacio cTexto cLinea doc = case doc of
+                                  Vacio -> cVacio
+                                  Texto s d -> cTexto s (rec d)
+                                  Linea n d -> cLinea n (rec d)
+                                where rec = foldDoc cVacio cTexto cLinea
+
+indentar :: Int -> Doc -> Doc
+{I}indentar i = foldDoc  Vacio 
+                        Texto
+                        (\n r -> Linea (n+i) r)
+
+
+Lemas utilizados:
+
+{LVacio}= {Para Todo k::Int positivos . indentar k Vacio = Vacio}
+
+{LTexto}= {Para Todo d::Doc, s::String, k::Int positivos . indentar k (Texto s d) = Texto s (indentar k d)}
+
+{LLinea}= {Para Todo d::Doc, n,k::Int positivos . indentar m (Linea k d) = Linea (m+k) (indentar k d)}
+
+
+Demostración de lemas:
+
+{LVacio}
+indentar k Vacio
+{I}= foldDoc Vacio Texto (\n r -> Linea (n+k) r) Vacio
+{F}= Vacio
+LVacio demostrado.
+
+{LTexto}
+indentar k (Texto s d)
+{I}= foldDoc Vacio Texto (\n r -> Linea (n+k) r) (Texto s d)
+{F}= Texto s (foldDoc Vacio Texto (\n r -> Linea (n+k) r) d)
+{I}= Texto s (indentar k d)
+LTexto demostrado.
+
+{LLinea}
+indentar m (Linea k d)
+{I}= foldDoc Vacio Texto (\n r -> Linea (n+m) r) (Linea k d)
+{F}= (\n r -> Linea (n+m) r) k (foldDoc Vacio Texto (\n r -> Linea (n+m) r) d)
+{Beta}= (\r -> Linea (k+m) r) (foldDoc Vacio Texto (\n r -> Linea (n+m) r) d)
+{Beta}= Linea (k+m) (foldDoc Vacio Texto (\n r -> Linea (n+m) r) d)
+{I}= Linea (k+m) (indentar m d)
+{Int}= Linea (m+k) (indentar m d)
+LLinea demostrado.
+
+Resolución del ejercicio:
+
+Para demostrar esto, vamos a hacer inducción en x.
+P(x)= Para Todo n,m::Int positivos .  indentar n (indentar m x) = indentar (n+m) x
+
+Por principio de inducción estructural, basta probar que la afirmación vale para cada uno de los constructores de x.
+
+caso x = Vacio
+
+Lado izquierdo:
+indentar n (indentar m Vacio)
+{LVacio}= indentar n Vacio
+{LVacio}= Vacio
+
+Lado derecho:
+indentar (n+m) Vacio
+{LVacio}= Vacio
+
+Como los dos lados me quedaron iguales, la afirmación vale para el caso x= Vacio
+
+para los otros dos casos planteamos la hipotesis inductiva:
+
+{HI}= P(doc)
+P(doc)= Para Todo n,m::Int positivos . indentar n (indentar m doc) = indentar (n+m) doc
+
+caso x = Texto s doc (donde s::String)
+
+Lado izquierdo:
+indentar n (indentar m (Texto s doc))
+{LTexto}= indentar n (Texto s (indentar m doc))
+{LTexto}= Texto s (indentar n (indentar m doc))
+{HI} = Texto s (indentar (n+m) doc)
+
+Lado derecho:
+indentar (n+m) (Texto s doc)
+{LTexto}= Texto s (indentar (n+m) doc)
+
+Como los dos lados me quedaron iguales, la afirmación vale para el caso x= Texto s doc
+
+caso x = Linea k doc (donde k::Int)
+
+Lado izquierdo:
+indentar n (indentar m (Linea k doc))
+{LLinea}= indentar n (Linea (m+k) (indentar m doc))
+{LLinea}= Linea (n+m+k) (indentar n (indentar m doc))
+{HI}= Linea (n+m+k) (indentar (n+m) doc) 
+
+Lado derecho:
+indentar (n+m) (Linea k doc)
+{LLinea}= Linea (n+m+k) (indentar (n+m) doc)
+
+Como los dos lados me quedaron iguales, la afirmación vale para el caso x= Linea k doc
+
+Por principio de inducción estructural demostramos que:
+
+Para Todo n,m::Int positivos && Para Todo x::Doc .
+indentar n (indentar m x) = indentar (n+m) x
+
